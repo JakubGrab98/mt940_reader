@@ -7,8 +7,7 @@ class MtReader:
     """Read and retrieve data from the MT940 file"""
     def __init__(self, file_path) -> None:
         self.file_path = file_path
-        self.inflows = []
-        self.outflows = []
+        self.transactions = []
         self.content = ""
 
     def read_file(self) -> str:
@@ -40,6 +39,14 @@ class MtReader:
         closing_balance = mt940_closing_balance[0][-1].replace(",", ".")
         return float(closing_balance)
     
+    def get_account_number(self) -> str:
+        """Retrieve owner's bank account from the bank statement"""
+        mt940_account_number = self.find_choosed_patern(
+            mt940_patterns.get("bank_account")
+        )
+        account_number = mt940_account_number[0][-1]
+        return str(account_number)
+    
     def get_rate_details(self) -> str:
         """Retrieve statement/transactions date"""
         mt940_statement_date = self.find_choosed_patern(
@@ -58,6 +65,7 @@ class MtReader:
         mt940_transaction_details = self.find_choosed_patern(
             mt940_patterns.get("transaction_details")
         )
+        account_number = self.get_account_number()
         transaction_date_string, currency_code = self.get_rate_details()
         rate_api = Rates(transaction_date_string, currency_code)
         rate = rate_api.get_rate()
@@ -66,20 +74,14 @@ class MtReader:
             amount_string = transaction[2]
             normalized_amount_string = amount_string.replace(",", ".")
             amount_float = float(normalized_amount_string)
+            transaction_side = transaction[1]
 
-            if transaction[1]=="CR":
-                self.inflows.append([
-                    transaction_date_string,
-                    amount_float,
-                    currency_code,
-                    rate
-                    ]
-                )
-            elif transaction[1]=="DR":
-                self.outflows.append([
-                    transaction_date_string,
-                    amount_float,
-                    currency_code,
-                    rate
-                    ]
-                )
+            self.transactions.append({
+                    "account_number": account_number,
+                    "transaction_date": transaction_date_string,
+                    "transaction_side": transaction_side,
+                    "transaction_amount": amount_float,
+                    "currency_code": currency_code,
+                    "PLN_rate": rate,
+                }
+            )
