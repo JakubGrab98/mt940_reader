@@ -1,6 +1,7 @@
 """Module provide a class which read and extract data from the MT940 bank statement file"""
 import re
-from regex_dict import patterns
+from utils import mt940_patterns
+from nbp_rates import Rates
 
 class MtReader:
     """Read and retrieve data from the MT940 file"""
@@ -25,30 +26,60 @@ class MtReader:
     def get_opening_balance(self) -> float:
         """Retrieve opening balance of current account number"""
         mt940_opening_balance = self.find_choosed_patern(
-            patterns.get("opening_balance")
+            mt940_patterns.get("opening_balance")
         )
-        opening_balance = mt940_opening_balance[0][-1]
+        opening_balance = mt940_opening_balance[0][-1].replace(",", ".")
         return float(opening_balance)
 
     def get_closing_balance(self) -> float:
         """Retrieve closing balance of current account number"""
         mt940_closing_balance = self.find_choosed_patern(
-            patterns.get("closed_balance")
+            mt940_patterns.get("closed_balance")
         )
-        closing_balance = mt940_closing_balance[0][-1]
+        print(mt940_closing_balance)
+        closing_balance = mt940_closing_balance[0][-1].replace(",", ".")
         return float(closing_balance)
     
-    def get_transaction_amount(self) -> None:
+    def get_rate_details(self) -> str:
+        """Retrieve statement/transactions date"""
+        mt940_statement_date = self.find_choosed_patern(
+            mt940_patterns.get("rate_details")
+        )
+        currency_code = mt940_statement_date[0][2]
+        statement_date_str = mt940_statement_date[0][1]
+        year = f"20{statement_date_str[:2]}"
+        month = statement_date_str[2:4]
+        day = statement_date_str[4:]
+        normalized_date_string = f"{year}-{month}-{day}"
+        return normalized_date_string, currency_code
+          
+    def get_transaction_details(self) -> None:
         """Retrieve transaction amount and assign to inflow or outflow"""
         mt940_transaction_details = self.find_choosed_patern(
-            patterns.get("transaction_details")
+            mt940_patterns.get("transaction_details")
         )
+        transaction_date_string, currency_code = self.get_rate_details()
+        rate_api = Rates(transaction_date_string, currency_code)
+        rate = rate_api.get_rate()
 
         for transaction in mt940_transaction_details:
             amount_string = transaction[2]
             normalized_amount_string = amount_string.replace(",", ".")
             amount_float = float(normalized_amount_string)
+
             if transaction[1]=="CR":
-                self.inflows.append(amount_float)
+                self.inflows.append([
+                    transaction_date_string,
+                    amount_float,
+                    currency_code,
+                    rate
+                    ]
+                )
             elif transaction[1]=="DR":
-                self.outflows.append(amount_float)
+                self.outflows.append([
+                    transaction_date_string,
+                    amount_float,
+                    currency_code,
+                    rate
+                    ]
+                )
