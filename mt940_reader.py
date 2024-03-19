@@ -47,6 +47,14 @@ class MtReader:
         account_number = mt940_account_number[0][-1]
         return str(account_number)
     
+    def get_statement_number(self) -> str:
+        """Retrieve number of the bank statement"""
+        mt940_statement_number = self.find_choosed_patern(
+            mt940_patterns.get("statement_number")
+        )
+        statement_number = mt940_statement_number[0]
+        return str(statement_number)
+    
     def get_rate_details(self) -> str:
         """Retrieve statement/transactions date"""
         mt940_statement_date = self.find_choosed_patern(
@@ -65,7 +73,6 @@ class MtReader:
         mt940_transaction_details = self.find_choosed_patern(
             mt940_patterns.get("transaction_details")
         )
-        account_number = self.get_account_number()
         transaction_date_string, currency_code = self.get_rate_details()
         rate_api = Rates(transaction_date_string, currency_code)
         rate = rate_api.get_rate()
@@ -77,7 +84,9 @@ class MtReader:
             transaction_side = transaction[1]
 
             self.transactions.append({
-                    "account_number": account_number,
+                    "source_file": self.file_path,
+                    "statement_number": self.get_statement_number(),
+                    "account_number": self.get_account_number(),
                     "transaction_date": transaction_date_string,
                     "transaction_side": transaction_side,
                     "transaction_amount": amount_float,

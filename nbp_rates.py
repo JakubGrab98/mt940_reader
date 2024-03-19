@@ -12,7 +12,7 @@ class Rates:
     """Class for retrievieng currency rate based on transaction date"""
 
     def __init__(self, rate_date: str, currency_code: str) -> float:
-        self.rate_date = datetime.strptime(rate_date, DATE_FORMAT).date()
+        self.rate_date = datetime.strptime(rate_date, DATE_FORMAT).date() - relativedelta(days=1)
         self.currency_code = currency_code.lower()
         self.rate = 1
 
