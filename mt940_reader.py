@@ -10,16 +10,18 @@ class MtReader:
         self.transactions = []
         self.content = ""
 
-    def read_file(self) -> str:
-        """Context manager for reading mt940 file"""
-        with open(self.file_path, "r") as file:
-            self.content = file.read()
-        return self.content
+    # def read_file(self) -> str:
+    #     """Context manager for reading mt940 file"""
+    #     with open(self.file_path, "r") as file:
+    #         self.content = file.read()
+    #     return self.content
 
     def find_choosed_patern(self, regex) -> list:
         """Retrieve a string based on the regex pattern"""
+        with open(self.file_path, "r") as file:
+            content = file.read()
         pattern = re.compile(regex, re.MULTILINE)
-        matches = re.findall(pattern, self.read_file())
+        matches = re.findall(pattern, content)
         return matches
 
     def get_opening_balance(self) -> float:
@@ -84,13 +86,14 @@ class MtReader:
             transaction_side = transaction[1]
 
             self.transactions.append({
-                    "source_file": self.file_path,
-                    "statement_number": self.get_statement_number(),
-                    "account_number": self.get_account_number(),
-                    "transaction_date": transaction_date_string,
-                    "transaction_side": transaction_side,
-                    "transaction_amount": amount_float,
-                    "currency_code": currency_code,
-                    "PLN_rate": rate,
+                self.get_statement_number():
+                    {
+                        "account_number": self.get_account_number(),
+                        "transaction_date": transaction_date_string,
+                        "transaction_side": transaction_side,
+                        "transaction_amount": amount_float,
+                        "currency_code": currency_code,
+                        "PLN_rate": rate,
+                    }
                 }
             )

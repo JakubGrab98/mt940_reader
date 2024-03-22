@@ -6,7 +6,7 @@ mt940_patterns = {
     "closed_balance": r"^:62F:(C|D)\d{6}(EUR|USD|GBP)(\d+,\d{2})",
     "transaction_amount": r"(R)(\d+,\d{2})(N)",
     "rate_details": r"^:62F:(C|D)(\d{6})(EUR|USD|GBP)",
-    "description": r":86:(.*?)(?=\n:|$)",
+    "description": r":86:(.*?)(?=(:61:|:62F:))",
 }
 
 def remove_duplicates(transactions):
