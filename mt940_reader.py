@@ -78,22 +78,28 @@ class MtReader:
         transaction_date_string, currency_code = self.get_rate_details()
         rate_api = Rates(transaction_date_string, currency_code)
         rate = rate_api.get_rate()
+        transaction_nr = 0
+        account_number = self.get_account_number()
+        statement_number = self.get_statement_number()
+        transaction_by_statement = {}
 
         for transaction in mt940_transaction_details:
             amount_string = transaction[2]
             normalized_amount_string = amount_string.replace(",", ".")
             amount_float = float(normalized_amount_string)
             transaction_side = transaction[1]
+            transaction_nr += 1
 
-            self.transactions.append({
-                self.get_statement_number():
-                    {
-                        "account_number": self.get_account_number(),
+            if statement_number not in transaction_by_statement:
+                transaction_by_statement[statement_number] = {}
+
+            transaction_by_statement[statement_number][transaction_nr] = {
+                        "transaction_number": transaction_nr,
+                        "account_number": account_number,
                         "transaction_date": transaction_date_string,
                         "transaction_side": transaction_side,
                         "transaction_amount": amount_float,
                         "currency_code": currency_code,
                         "PLN_rate": rate,
                     }
-                }
-            )
+        self.transactions.append(transaction_by_statement)

@@ -1,41 +1,51 @@
 import json
-
-
-seen = set()
-unique_dicts = []
+import operator
+import pandas as pd
 
 def remove_duplicates(transactions):
-    for d in transactions:
-        serialized = json.dumps(d, sort_keys=True)
-        if serialized not in seen:
-            seen.add(serialized)
-            unique_dicts.append(d)
+    seen = set()
+    result = []
+    for sublist in transactions:
+        unique_sublist = []
+        for item in sublist:
+            print(item)
+            serialized_item = json.dumps(item, sort_keys=True)
+            if serialized_item not in seen:
+                seen.add(serialized_item)
+                unique_sublist.append(item)
+        result.append(unique_sublist)
+    return result
 
 
-filename = "transactions.json"
+FILE_NAME = "transactions.json"
 
 
-with open(filename, "r") as jsonfile:
+with open(FILE_NAME, "r") as jsonfile:
     transactions_list = json.load(jsonfile)
-    unique_transactions = remove_duplicates(transactions_list)
-
-with open(filename, "w") as jsonfile:
-    data = unique_transactions
-    json.dump(data, jsonfile, indent=4)
 
 
+# unique_transactions = remove_duplicates(transactions_list)
 
-inflows = []
-outflows = []
 
-for transactions in transactions_list:
-    print(transactions)
-    for transaction in transactions:
-        if transaction["transaction_side"] == "CR" and transaction["transaction_date"][0:4] == "2015": #or transaction["transaction_date"][0:4] == "2016"):
-            inflows.append(transaction["transaction_amount"])
-        elif transaction["transaction_side"] == "DR" and transaction["transaction_date"][0:4] == "2015": # or transaction["transaction_date"][0:4] == "2016"):
-            outflows.append(transaction["transaction_amount"])
-            
-print(f"inflows: {inflows}")
-print(f"outflows: {outflows}")
-print(sum(inflows) - sum(outflows))
+# with open(FILE_NAME, "w") as jsonfile:
+#     data = unique_transactions
+#     json.dump(data, jsonfile, indent=4)
+
+def get_inflows_and_outflows(data: list):
+    inflows = []
+    outflows = []
+    for sublist in data:
+        for statements_dict in sublist:
+            for transaction_dict in statements_dict.values():
+                for transaction in transaction_dict.values():
+                    if transaction["transaction_side"] == "CR":
+                        inflows.append(transaction)
+                    elif transaction["transaction_side"] == "DR":
+                        outflows.append(transaction)
+    return inflows, outflows
+
+inflows, outflows = get_inflows_and_outflows(transactions_list)
+print(sorted(inflows, key=operator.itemgetter("transaction_date")))
+
+def fifo_calculator(inflows, outflows):
+    pass
