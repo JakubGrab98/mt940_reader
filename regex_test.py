@@ -2,38 +2,44 @@ import re
 from utils import mt940_patterns
 
 mt940_content = """
+
 :20:1
-:25:/PL50124062921978001062009446
-:28C:00034
-:60F:C240228EUR000001528802,85
-:61:2402260228CR000000014938,50N230NONREF
-:86:230^00PRZELEW                    ^34000
-^3012400001^38PL37124000010000008211978100
-^20FVS/019/EUR/2024
-^2633B 15000,EUR 71F 0,EUR 71F^27 31,5EUR 71F 30,EUR        
-^32KR HSBC 002-707644-001     ^33        COLLIERS INTERNATIO
-^62NAL KOREA LTD.  14TH FLOOR,^6382,SAEMUNAN-RO,JONGNO-GUKW0
-^640014938.50EUR PR000.00
-:61:2402280228DR000000005250,00N645NONREF
-:86:645^00PRZELEW SEPA WYSŁANY       ^34000
-^3024900005^38PL62249000050000460055004712
-^20TF/2024/01/001/EUR netto w ^21eur
-^32TACAKIEWICZ FERMA KRESEK SP^33OLKA Z OGRANICZONA ODPOWIED
-^62ZIALNOSCIA      JELENIOGORS^63KA 18B 60-179 POZNAN
-:61:2402280228DR000000002843,84N645NONREF
-:86:645^00PRZELEW SEPA WYSŁANY       ^34000
-^3010201811^38PL81102018110000070203330818
-^20FVE 005/02/2024
-^32OLIVIA SEVEN SPOLKA Z OGRAN^33ICZONA ODPOWIEDZIALNOSCIA
-^62AL. GRUNWALDZKA 472 80-309 ^63GDANSK
-:62F:C240228EUR000001535647,51
-:64:C240228EUR000001535647,51
+:25:/PL26124062921787001062009534
+:28C:00016
+:60F:C230708USD000000181716,24
+:61:2307110711CD000000300000,00N172NONREF
+:86:172^00PRZELEW                    ^34000
+^3012401037^38PL12124010371111001045285562
+^20Transakcja w obrocie dewizo^21wym, 237B003405FX/83568 :K:
+^22 1,000000 :S: 4,070000 :O: ^231 221 000,00 PLN
+^32COLLIERS POLAND SPOŁKA Z O.^33O.      PL PIŁSUDSKIEGO 3
+^6200-078    WARSZAWA         ^63   PL
+:62F:C230711USD000000481716,24
+:64:C230711USD000000481716,24
 -
+
 """
 
 
 
-pattern = re.compile(mt940_patterns.get("rate_details"), re.MULTILINE)
-matches = re.findall(pattern, mt940_content)
+# pattern = re.compile(mt940_patterns.get("transaction_details"), re.DOTALL)
+# matches = re.findall(pattern, mt940_content)
 
+# print(matches)
+pattern = re.compile(mt940_patterns.get("bank_rates"), re.DOTALL)
+
+# Find all matches of the pattern in the text
+matches = re.findall(pattern, mt940_content)
 print(matches)
+
+# for match in matches:
+#     content = match[3]
+#     pattern = re.compile(mt940_patterns.get("exchange_transaction"), re.MULTILINE)
+#     rates = re.findall(pattern, content)
+#     print(rates)
+
+# Processing matches
+# for match in matches:
+#     # Trim leading and trailing whitespace for each match
+#     cleaned_match = match.strip()
+#     print(cleaned_match)
