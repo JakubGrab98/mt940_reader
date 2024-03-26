@@ -21,6 +21,7 @@ for file in mt940_files:
     try:
         full_path = os.path.join(DIR_PATH, file)
         mt940_reader = MtReader(full_path)
+        mt940_reader.read_file()
         mt940_reader.get_transaction_details()
         new_transactions.append(
             mt940_reader.transactions
