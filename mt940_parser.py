@@ -3,11 +3,10 @@ import re
 from utils import mt940_patterns
 from nbp_rates import Rates
 
-class MtReader:
+class Mt940Parser:
     """Read and retrieve data from the MT940 file"""
     def __init__(self, file_path) -> None:
         self.file_path = file_path
-        self.transactions = []
         self.content = ""
 
     def read_file(self) -> str:
@@ -104,12 +103,11 @@ class MtReader:
             re.DOTALL,
         )
         transaction_date_string, currency_code = self.get_rate_details()
-        print(currency_code)
         rate_api = Rates(transaction_date_string, currency_code)
         transaction_nr = 0
         account_number = self.get_account_number()
         statement_number = self.get_statement_number()
-        transaction_by_statement = {}
+        transaction_by_date = {}
 
         for transaction in mt940_transaction_details:
             transaction_side = transaction[1]
@@ -124,11 +122,12 @@ class MtReader:
             else:
                 rate = rate_api.get_rate()
 
-            if statement_number not in transaction_by_statement:
-                transaction_by_statement[statement_number] = {}
+            if transaction_date_string not in transaction_by_date:
+                transaction_by_date[transaction_date_string] = {}
 
-            transaction_by_statement[statement_number][transaction_nr] = {
+            transaction_by_date[transaction_date_string][transaction_nr] = {
                         "transaction_number": transaction_nr,
+                        "statement_number": statement_number,
                         "account_number": account_number,
                         "transaction_date": transaction_date_string,
                         "transaction_side": transaction_side,
@@ -136,4 +135,4 @@ class MtReader:
                         "currency_code": currency_code,
                         "PLN_rate": rate,
                     }
-        self.transactions.append(transaction_by_statement)
+        return transaction_by_date
