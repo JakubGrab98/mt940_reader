@@ -1,51 +1,65 @@
 import json
-import operator
 import pandas as pd
-
-def remove_duplicates(transactions):
-    seen = set()
-    result = []
-    for sublist in transactions:
-        unique_sublist = []
-        for item in sublist:
-            print(item)
-            serialized_item = json.dumps(item, sort_keys=True)
-            if serialized_item not in seen:
-                seen.add(serialized_item)
-                unique_sublist.append(item)
-        result.append(unique_sublist)
-    return result
+from collections import deque
+from fifo_calculator import FifoCalculator
+from fifo_excel_report import FifoExcelReport
 
 
 FILE_NAME = "transactions.json"
-
+EXPORT_PATH = r"C:\FIFO_APP\fifo-report.xlsx"
 
 with open(FILE_NAME, "r") as jsonfile:
     transactions_list = json.load(jsonfile)
 
+fifo_calculator = FifoCalculator(transactions_list)
+fifo_calculator.fifo_calculation()
+fifo_report = FifoExcelReport(fifo_calculator.fifo_logs)
+fifo_report.export_to_excel(EXPORT_PATH)
 
-# unique_transactions = remove_duplicates(transactions_list)
+# transactions_list.sort(key=lambda x: x["id"])
+
+# fifo_queue = deque()
+# fifo_log = []
 
 
-# with open(FILE_NAME, "w") as jsonfile:
-#     data = unique_transactions
-#     json.dump(data, jsonfile, indent=4)
+# for transaction in transactions_list:
+#     if transaction["transaction_side"] == "CR":
+#         fifo_queue.append(
+#             (
+#                 transaction["transaction_amount"],
+#                 transaction["PLN_rate"],
+#             )
+#         )
+#     elif transaction["transaction_side"] == "DR":
+#         outflow_amount = outflow_amount = transaction["transaction_amount"]
+#         outflow_rate = transaction["PLN_rate"]
+#         outflow_sources = []
+#         outflow_cost = 0
 
-def get_inflows_and_outflows(data: list):
-    inflows = []
-    outflows = []
-    for sublist in data:
-        for statements_dict in sublist:
-            for transaction_dict in statements_dict.values():
-                for transaction in transaction_dict.values():
-                    if transaction["transaction_side"] == "CR":
-                        inflows.append(transaction)
-                    elif transaction["transaction_side"] == "DR":
-                        outflows.append(transaction)
-    return inflows, outflows
+#         while outflow_amount > 0 and fifo_queue:
+#             inflow_amount, inflow_rate = fifo_queue.popleft()
+#             if inflow_amount <= outflow_amount:
+#                 outflow_amount -= inflow_amount
+#                 outflow_sources.append((inflow_amount, inflow_rate))
+#                 outflow_cost += inflow_amount * (outflow_rate - inflow_rate)
+#             else:
+#                 remaining_infow_amount = inflow_amount - outflow_amount
+#                 fifo_queue.appendleft((remaining_infow_amount, inflow_rate))
+#                 outflow_cost += outflow_amount * (outflow_rate - inflow_rate)
+#                 outflow_sources.append((outflow_amount, inflow_rate))
+#                 outflow_amount = 0
 
-inflows, outflows = get_inflows_and_outflows(transactions_list)
-print(sorted(inflows, key=operator.itemgetter("transaction_date")))
+#         fifo_log.append(
+#             {"outflow_id": transaction["id"],
+#             "date": transaction["transaction_date"],
+#             "outflow_amount": transaction["transaction_amount"],
+#             "outflow_rate": transaction["PLN_rate"],
+#             "outflow_sources": outflow_sources,
+#             "outflow_cost": outflow_cost}
+#         )
 
-def fifo_calculator(inflows, outflows):
-    pass
+# # Save FIFO log to a file
+# with open('fifo_report.json', 'w') as f:
+#     json.dump(fifo_log, f, indent=4)
+
+# print("FIFO report saved as fifo_report.json.")
