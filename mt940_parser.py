@@ -88,9 +88,11 @@ class Mt940Parser:
             re.DOTALL,
         )
         if mt940_bank_rate:
-            if mt940_bank_rate[0][0] != default_rate:
+            if mt940_bank_rate[0][0] == default_rate:
+                return float(mt940_bank_rate[0][1].replace(",", "."))
+            if mt940_bank_rate[0][1] == default_rate:
                 return float(mt940_bank_rate[0][0].replace(",", "."))
-            return float(mt940_bank_rate[0][1].replace(",", "."))
+            return False
         if mt940_exchange_transaction:
             return float(mt940_exchange_transaction[0].replace(",", "."))
         return False

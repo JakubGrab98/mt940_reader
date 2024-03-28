@@ -7,7 +7,7 @@ mt940_patterns = {
     "transaction_amount": r"(R)(\d+,\d{2})(N)",
     "rate_details": r"^:62F:(C|D)(\d{6})(EUR|USD|GBP)",
     "description": r":86:(.*?)(?=(:61:|:62F:))",
-    "bank_rates": r"(\d+,\d{6}) :S: (\d+,\d{6})",
+    "bank_rates": r"(\d{1}+,\d{6}) :S: (\d+,\d{6})",
     "bank_sell_rate": r"S: (\d+,\d{6})",
     "exchange_transaction_rate": r"WYM: (\d+,\d{6})",
     "transaction": r"1:(\d{10})(CR|DR|CD|DD)(\d+,\d{2})(.+?)\:6",
