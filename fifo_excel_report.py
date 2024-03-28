@@ -26,9 +26,10 @@ class FifoExcelReport():
                     "date": entry["date"],
                     "outflow_amount": entry["outflow_amount"],
                     "outflow_rate": entry["outflow_rate"],
-                    "source_amount": source[0],
-                    "source_rate": source[1],
-                    "outflow_cost": source[2]
+                    "inflow_id": source[3],
+                    "inflow_amount": source[0],
+                    "inflow_rate": source[1],
+                    "outflow_cost": source[2],
                 }
                 rows.append(row)
         df = pd.DataFrame(rows)

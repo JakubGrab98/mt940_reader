@@ -21,7 +21,7 @@ class FifoCalculator:
         for transaction in self.transactions:
             if transaction["transaction_side"] == "CR":
                 self.fifo_queue.append(
-                    (
+                    (   transaction["id"],
                         transaction["transaction_amount"],
                         transaction["PLN_rate"],
                     )
@@ -32,7 +32,7 @@ class FifoCalculator:
                 outflow_sources = []
 
                 while outflow_amount > 0 and self.fifo_queue:
-                    inflow_amount, inflow_rate = self.fifo_queue.popleft()
+                    inflow_id, inflow_amount, inflow_rate = self.fifo_queue.popleft()
                     if inflow_amount <= outflow_amount:
                         outflow_amount -= inflow_amount
                         outflow_cost = inflow_amount * (outflow_rate - inflow_rate)
@@ -41,17 +41,25 @@ class FifoCalculator:
                                 inflow_amount,
                                 inflow_rate,
                                 outflow_cost,
+                                inflow_id,
                             )
                         )
                     else:
                         remaining_infow_amount = inflow_amount - outflow_amount
-                        self.fifo_queue.appendleft((remaining_infow_amount, inflow_rate))
+                        self.fifo_queue.appendleft(
+                            (
+                                inflow_id,
+                                remaining_infow_amount,
+                                inflow_rate,
+                            )
+                        )
                         outflow_cost = outflow_amount * (outflow_rate - inflow_rate)
                         outflow_sources.append(
                             (
                                 outflow_amount,
                                 inflow_rate,
                                 outflow_cost,
+                                inflow_id,
                                 )
                         )
                         outflow_amount = 0
