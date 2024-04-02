@@ -17,8 +17,6 @@ class Mt940Parser:
 
     def find_choosed_patern(self, regex, content, re_flag=re.MULTILINE) -> list:
         """Retrieve a string based on the regex pattern"""
-        # with open(self.file_path, "r") as file:
-        #     content = file.read()
         pattern = re.compile(regex, re_flag)
         matches = re.findall(pattern, content)
         return matches

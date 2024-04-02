@@ -19,14 +19,14 @@ class FifoCalculator:
         """Calculates fifo cost of outflow transactions"""
         self.transactions.sort(key=lambda x: x["id"])
         for transaction in self.transactions:
-            if transaction["transaction_side"] == "CR":
+            if transaction["transaction_side"][0] == "C":
                 self.fifo_queue.append(
                     (   transaction["id"],
                         transaction["transaction_amount"],
                         transaction["PLN_rate"],
                     )
                 )
-            elif transaction["transaction_side"] == "DR":
+            elif transaction["transaction_side"][0] == "D":
                 outflow_amount = outflow_amount = transaction["transaction_amount"]
                 outflow_rate = transaction["PLN_rate"]
                 outflow_sources = []

@@ -1,4 +1,5 @@
 import json
+import datetime
 import os
 import logging
 from mt940_parser import Mt940Parser
@@ -13,7 +14,15 @@ logging.basicConfig(
     ]
 )
 
-DIR_PATH = r"N:\RED Business Support\MT940\PEKAO_CIP_EUR"
+# file_path = r"N:\RED Business Support\MT940\PEKAO_CIP_EUR\Proffice MT940_CIP_EUR_WB_20240328071025_20240328092919.old"
+# creation_time = os.path.getctime(file_path)
+# formatted_time = datetime.datetime.fromtimestamp(creation_time).date()
+# print(formatted_time)
+# today = datetime.datetime.now().date()
+# print(today)
+
+
+DIR_PATH = r"N:\RED Business Support\MT940\PEKAO_CIP_USD"
 mt940_files = [file for file in os.listdir(DIR_PATH) if file[-4:] == ".old"]
 # test_files = [
 #     r"N:\RED Business Support\MT940\PEKAO_CIP_EUR\Proffice MT940_CIP_EUR_WB_20240326071051_20240326091953.old",
@@ -42,7 +51,7 @@ for file in mt940_files:
                     transaction_details["id"] = unique_transaction_id
                     new_transactions.append(transaction_details)
     except Exception as e:
-        logging.error("Error processing file: %s", file)
+        logging.error("Error processing file: %s %s", file, e)
 
 filename = "transactions.json"
 
