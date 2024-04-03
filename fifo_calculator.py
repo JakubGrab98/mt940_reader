@@ -17,7 +17,7 @@ class FifoCalculator:
 
     def fifo_calculation(self):
         """Calculates fifo cost of outflow transactions"""
-        self.transactions.sort(key=lambda x: x["id"])
+        self.transactions.sort(key=lambda x: (x["transaction_side"], x["id"]))
         for transaction in self.transactions:
             if transaction["transaction_side"][0] == "C":
                 self.fifo_queue.append(

@@ -22,8 +22,8 @@ logging.basicConfig(
 # print(today)
 
 
-DIR_PATH = r"N:\RED Business Support\MT940\PEKAO_CIP_USD"
-mt940_files = [file for file in os.listdir(DIR_PATH) if file[-4:] == ".old"]
+DIR_PATH = r"N:\RED Business Support\MT940\PEKAO_CDBP_EUR"
+mt940_files = [file for file in os.listdir(DIR_PATH) if file[-6:] == ".mt940"]
 # test_files = [
 #     r"N:\RED Business Support\MT940\PEKAO_CIP_EUR\Proffice MT940_CIP_EUR_WB_20240326071051_20240326091953.old",
 #     r"N:\RED Business Support\MT940\PEKAO_CIP_EUR\Proffice MT940_CIP_EUR_WB_20240325071034_20240325095146.old",
@@ -53,7 +53,7 @@ for file in mt940_files:
     except Exception as e:
         logging.error("Error processing file: %s %s", file, e)
 
-filename = "transactions.json"
+filename = "DEFINE-EUR.json"
 
 try:
     with open(filename, "r") as jsonfile:
