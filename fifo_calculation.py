@@ -5,8 +5,8 @@ from fifo_calculator import FifoCalculator
 from fifo_excel_report import FifoExcelReport
 
 
-FILE_NAME = "transactions.json"
-EXPORT_PATH = r"C:\FIFO_APP\fifo-report-USD.xlsx"
+FILE_NAME = "DEFINE-EUR.json"
+EXPORT_PATH = r"C:\FIFO_APP\fifo-report-define.xlsx"
 
 with open(FILE_NAME, "r") as jsonfile:
     transactions_list = json.load(jsonfile)
@@ -17,16 +17,16 @@ fifo_report = FifoExcelReport(fifo_calculator.fifo_logs)
 fifo_report.export_to_excel(EXPORT_PATH)
 
 
-# inflows = []
-# outflows = []
+inflows = []
+outflows = []
 
-# for transaction in transactions_list:
-#     if transaction["transaction_side"][0] == "C":# and transaction["transaction_date"][0:7] == "2016-12": #or transaction["transaction_date"][0:4] == "2016"):
-#         inflows.append(transaction["transaction_amount"])
-#     elif transaction["transaction_side"][0] == "D":# and transaction["transaction_date"][0:7] == "2016-12": # or transaction["transaction_date"][0:4] == "2016"):
-#         outflows.append(transaction["transaction_amount"])
+for transaction in transactions_list:
+    if transaction["transaction_side"][0] == "C":# and transaction["transaction_date"][0:7] == "2016-12": #or transaction["transaction_date"][0:4] == "2016"):
+        inflows.append(transaction["transaction_amount"])
+    elif transaction["transaction_side"][0] == "D":# and transaction["transaction_date"][0:7] == "2016-12": # or transaction["transaction_date"][0:4] == "2016"):
+        outflows.append(transaction["transaction_amount"])
 
-# print(sum(inflows) - sum(outflows))
+print(sum(inflows) - sum(outflows))
 # transactions_list.sort(key=lambda x: x["id"])
 
 # fifo_queue = deque()
