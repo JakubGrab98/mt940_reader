@@ -1,5 +1,6 @@
 """Module responsibles for preparing report from FIFO data."""
 import pandas as pd
+import numpy as np
 
 class FifoExcelReport():
     """
@@ -20,20 +21,32 @@ class FifoExcelReport():
         """
         rows = []
         for entry in self.fifo_data:
-            for source in entry["outflow_sources"]:
+            if entry["transaction_type"] == "C":
                 row = {
-                    "outflow_id": entry["outflow_id"],
+                    "transaction_id": entry["transaction_id"],
+                    "transaction_type": entry["transaction_type"],
                     "date": entry["date"],
-                    "outflow_amount": entry["outflow_amount"],
-                    "outflow_rate": entry["outflow_rate"],
-                    "inflow_id": source[3],
-                    "inflow_amount": source[0],
-                    "inflow_rate": source[1],
-                    "outflow_cost": source[2],
+                    "amount": entry["inflow_amount"],
+                    "current_rate": entry["current_rate"],
+                    "outflow_cost": 0,
                 }
                 rows.append(row)
+            else:
+                for source in entry["outflow_sources"]:
+                    row = {
+                        "transaction_id": entry["transaction_id"],
+                        "transaction_type": entry["transaction_type"],
+                        "date": entry["date"],
+                        "current_rate": entry["current_rate"],
+                        "inflow_id": source[3],
+                        "amount": source[0],
+                        "inflow_rate": source[1],
+                        "outflow_cost": source[2],
+                    }
+                    rows.append(row)
         df = pd.DataFrame(rows)
-        self.df = df
+        sorted_df = df.sort_values(by=["transaction_id", "transaction_type"])
+        self.df = sorted_df
 
     def export_to_excel(self, file_path: str) -> None:
         """

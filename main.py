@@ -23,15 +23,11 @@ logging.basicConfig(
 
 
 DIR_PATH = r"N:\RED Business Support\MT940\PEKAO_CDBP_EUR"
-mt940_files = [file for file in os.listdir(DIR_PATH) if file[-6:] == ".mt940"]
-# test_files = [
-#     r"N:\RED Business Support\MT940\PEKAO_CIP_EUR\Proffice MT940_CIP_EUR_WB_20240326071051_20240326091953.old",
-#     r"N:\RED Business Support\MT940\PEKAO_CIP_EUR\Proffice MT940_CIP_EUR_WB_20240325071034_20240325095146.old",
-#     r"N:\RED Business Support\MT940\PEKAO_CIP_EUR\Proffice MT940_CIP_EUR_WB_20231002071018.old",
-#     r"N:\RED Business Support\MT940\PEKAO_CIP_EUR\export20230930191314_20230930192456.old",
-#     r"N:\RED Business Support\MT940\PEKAO_CIP_EUR\Proffice MT940_CIP_EUR_WB_20231222071057_20231222095819.old",
-#     r"N:\RED Business Support\MT940\PEKAO_CIP_EUR\Proffice MT940_CIP_EUR_WB_20240321071030_20240321100335.old",
-# ]
+mt940_files = [
+    file for file in os.listdir(DIR_PATH) 
+    if file[-6:] == ".mt940"
+    or file[-4:] == ".old"
+]
 
 new_transactions = []
 for file in mt940_files:
