@@ -26,6 +26,14 @@ class FifoCalculator:
                         transaction["PLN_rate"],
                     )
                 )
+                self.fifo_logs.append(
+                    {   "transaction_id": transaction["id"],
+                        "transaction_type": transaction["transaction_side"][0],
+                        "date": transaction["transaction_date"],
+                        "inflow_amount": transaction["transaction_amount"],
+                        "current_rate": transaction["PLN_rate"],
+                    }
+                )
             elif transaction["transaction_side"][0] == "D":
                 outflow_amount = outflow_amount = transaction["transaction_amount"]
                 outflow_rate = transaction["PLN_rate"]
@@ -65,10 +73,10 @@ class FifoCalculator:
                         outflow_amount = 0
 
                 self.fifo_logs.append(
-                    {"outflow_id": transaction["id"],
-                    "date": transaction["transaction_date"],
-                    "outflow_amount": transaction["transaction_amount"],
-                    "outflow_rate": transaction["PLN_rate"],
-                    "outflow_sources": outflow_sources,
-                    "outflow_cost": outflow_cost}
+                    {   "transaction_id": transaction["id"],
+                        "transaction_type": transaction["transaction_side"][0],
+                        "date": transaction["transaction_date"],
+                        "current_rate": transaction["PLN_rate"],
+                        "outflow_sources": outflow_sources,
+                    }
                 )
