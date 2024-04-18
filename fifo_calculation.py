@@ -5,8 +5,8 @@ from fifo_calculator import FifoCalculator
 from fifo_excel_report import FifoExcelReport
 
 
-FILE_NAME = "DEFINE-EUR.json"
-EXPORT_PATH = r"C:\FIFO_APP\fifo-report-define.xlsx"
+FILE_NAME = "CP-EUR.json"
+EXPORT_PATH = r"C:\FIFO_APP\fifo-report-cp.xlsx"
 
 with open(FILE_NAME, "r") as jsonfile:
     transactions_list = json.load(jsonfile)

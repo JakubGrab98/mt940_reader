@@ -1,6 +1,9 @@
 """Module responsibles for preparing report from FIFO data."""
 import pandas as pd
-import numpy as np
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 class FifoExcelReport():
     """
@@ -57,4 +60,5 @@ class FifoExcelReport():
         if self.df is None:
             self.prepare_dataframe()
         self.df.to_excel(file_path, index=False)
+        logger.info(f"Excel report was created in {file_path}")
         
