@@ -1,7 +1,11 @@
 """Module provide a class which read and extract data from the MT940 bank statement file"""
 import re
+import logging
 from utils import mt940_patterns
 from nbp_rates import Rates
+
+
+logger = logging.getLogger(__name__)
 
 class Mt940Parser:
     """Read and retrieve data from the MT940 file"""
@@ -13,6 +17,7 @@ class Mt940Parser:
         """Context manager for reading mt940 file"""
         with open(self.file_path, "r") as file:
             self.content = file.read()
+            logger.info(f"Processing file {self.file_path}")
         return self.content
 
     def find_choosed_patern(self, regex, content, re_flag=re.MULTILINE) -> list:
@@ -39,7 +44,7 @@ class Mt940Parser:
         print(mt940_closing_balance)
         closing_balance = mt940_closing_balance[0][-1].replace(",", ".")
         return float(closing_balance)
-    
+
     def get_account_number(self) -> str:
         """Retrieve owner's bank account from the bank statement"""
         mt940_account_number = self.find_choosed_patern(
@@ -48,7 +53,7 @@ class Mt940Parser:
         )
         account_number = mt940_account_number[0][-1]
         return str(account_number)
-    
+
     def get_statement_number(self) -> str:
         """Retrieve number of the bank statement"""
         mt940_statement_number = self.find_choosed_patern(
@@ -57,7 +62,7 @@ class Mt940Parser:
         )
         statement_number = mt940_statement_number[0]
         return str(statement_number)
-    
+
     def get_rate_details(self) -> str:
         """Retrieve statement/transactions date"""
         mt940_statement_date = self.find_choosed_patern(
@@ -119,8 +124,10 @@ class Mt940Parser:
             is_bank_rate = self.get_bank_rate(transaction_description)
             if is_bank_rate:
                 rate = is_bank_rate
+                logger.info("Rate provided by bank.")
             else:
                 rate = rate_api.get_rate()
+                logger.info("NBP rate assignment.")
 
             if transaction_date_string not in transaction_by_date:
                 transaction_by_date[transaction_date_string] = {}
