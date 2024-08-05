@@ -1,6 +1,7 @@
 """Module provide a class which read and extract data from the MT940 bank statement file"""
 import re
 import logging
+from typing import Tuple
 from utils import mt940_patterns
 from nbp_rates import Rates
 
@@ -63,7 +64,7 @@ class Mt940Parser:
         statement_number = mt940_statement_number[0]
         return str(statement_number)
 
-    def get_rate_details(self) -> str:
+    def get_rate_details(self) -> Tuple[str, str]:
         """Retrieve statement/transactions date"""
         mt940_statement_date = self.find_choosed_patern(
             mt940_patterns.get("rate_details"),
@@ -100,7 +101,7 @@ class Mt940Parser:
             return float(mt940_exchange_transaction[0].replace(",", "."))
         return False
 
-    def get_transaction_details(self) -> None:
+    def get_transaction_details(self) -> dict:
         """Retrieve transaction amount and assign to inflow or outflow"""
         mt940_transaction_details = self.find_choosed_patern(
             mt940_patterns.get("transaction"),

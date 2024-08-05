@@ -11,30 +11,3 @@ mt940_patterns = {
     "exchange_transaction_rate": r"WYM: (\d+,\d{6})",
     "transaction": r"1:(\d{10})(CR|DR|CD|DD)(\d+,\d{2})(.+?)\:6",
 }
-
-def remove_duplicates(transactions):
-    unique_transactions = []
-    seen = set()
-
-    for transaction in transactions:
-        # Create a tuple of the fields that determine uniqueness
-        identifier = (
-            transaction["statement_number"],
-            transaction["transaction_date"],
-            transaction['description'],
-        )
-        
-        if identifier not in seen:
-            seen.add(identifier)
-            unique_transactions.append(transaction)
-
-    return unique_transactions
-
-FRAME_COLUMNS = [
-    "account_number",
-    "transaction_date",
-    "transaction_side",
-    "transaction_amount",
-    "currency_code",
-    "PLN_rate",
-]

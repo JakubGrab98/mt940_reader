@@ -11,12 +11,12 @@ DATE_FORMAT = "%Y-%m-%d"
 class Rates:
     """Class for retrievieng currency rate based on transaction date"""
 
-    def __init__(self, rate_date: str, currency_code: str) -> float:
+    def __init__(self, rate_date: str, currency_code: str) -> None:
         self.rate_date = datetime.strptime(rate_date, DATE_FORMAT).date() - relativedelta(days=1)
         self.currency_code = currency_code.lower()
         self.rate = 1
 
-    def get_rate(self) -> None:
+    def get_rate(self) -> None | float:
         """Getting average rate on specific date for specific currency"""
         rate_assign = False
         while not rate_assign:

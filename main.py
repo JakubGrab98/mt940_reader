@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-import datetime
 import logging
 import logging.config
 from mt940_parser import Mt940Parser
@@ -22,20 +21,14 @@ def setup_logging() -> None:
     except json.JSONDecodeError:
         logger.error("Invalid JSON in the logging configuration file.")
 
-# file_path = r"N:\RED Business Support\MT940\PEKAO_CIP_EUR\Proffice MT940_CIP_EUR_WB_20240328071025_20240328092919.old"
-# creation_time = os.path.getctime(file_path)
-# formatted_time = datetime.datetime.fromtimestamp(creation_time).date()
-# print(formatted_time)
-# today = datetime.datetime.now().date()
-# print(today)
 
 if __name__ == "__main__":
     setup_logging()
-    FILE_NAME = "CdbP-EUR-test.json"
-    EXPORT_PATH = r"C:\FIFO_APP\fifo-report-cdbpp-test.xlsx"
-    DIR_PATH = r"N:\RED Business Support\MT940\PEKAO_CDBP_EUR"
+    OUTPUT_FILE_NAME = "FILE.json"
+    EXPORT_PATH = r"TEST.xlsx"
+    SOURCE_DIRECTORY = r"C:\"
     mt940_files = [
-        file for file in Path(DIR_PATH).iterdir()
+        file for file in Path(SOURCE_DIRECTORY).iterdir()
         if str(file)[-6:] == ".mt940"
         or str(file)[-4:] == ".old"
     ]
@@ -43,7 +36,7 @@ if __name__ == "__main__":
     new_transactions = []
     for file in mt940_files:
         try:
-            full_path = Path(DIR_PATH) / file
+            full_path = Path(SOURCE_DIRECTORY) / file
             mt940_reader = Mt940Parser(full_path)
             mt940_reader.read_file()
             transaction_data = mt940_reader.get_transaction_details()
@@ -61,7 +54,7 @@ if __name__ == "__main__":
             logger.error("Error processing file: %s %s", file, e)
 
     try:
-        with open(FILE_NAME, "r") as jsonfile:
+        with open(OUTPUT_FILE_NAME, "r") as jsonfile:
             transactions = json.load(jsonfile)
     except (FileNotFoundError, json.JSONDecodeError):
         logger.error("Transaction's file not found, initialize empty list")
@@ -69,11 +62,11 @@ if __name__ == "__main__":
 
     transactions.extend(new_transactions)
 
-    with open(FILE_NAME, "w") as jsonfile:
+    with open(OUTPUT_FILE_NAME, "w") as jsonfile:
         json.dump(transactions, jsonfile, indent=4)
 
     try:
-        with open(FILE_NAME, "r") as jsonfile:
+        with open(OUTPUT_FILE_NAME, "r") as jsonfile:
             transactions_list = json.load(jsonfile)
     except FileNotFoundError:
         logger.error("Transaction's file not found")
